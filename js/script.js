@@ -663,6 +663,15 @@ jQuery.extend(Import.prototype, {
             refresh_token: this.loginData.refresh_token
         };
 
+        var updated = moment(this.loginData.updated);
+        var now = moment();
+        var diff = now.diff(updated, 'minutes');
+
+        if(diff < 20){
+            //no need to refresh
+            return;
+        }
+
         jQuery.ajax({
             url: this.apiUrl + 'admin/auth/refresh-token',
             type: 'POST',
@@ -681,6 +690,19 @@ jQuery.extend(Import.prototype, {
     _signApiSuccess : function(data){
         if(data.token && data.token.length > 0 && data.refresh_token && data.refresh_token.length > 0){
             console.log('token: ' + data.token);
+            var currentData = localStorage.getItem('loginData')?JSON.parse(localStorage.getItem('loginData')):{};
+
+            if(currentData && currentData.company && currentData.company === data.company){
+                //check if token other than set new updated time
+                if(currentData.token && currentData.token !== data.token){
+                    data.updated = moment().format('YYYY-MM-DD HH:mm:ss');
+                } else {
+                    data.updated = currentData.updated;
+                }
+            } else {
+                data.updated = moment().format('YYYY-MM-DD HH:mm:ss');
+            }
+
             //save to local storage
             localStorage.setItem('loginData', JSON.stringify(data));
             this.loginData = data;
@@ -716,6 +738,19 @@ jQuery.extend(Import.prototype, {
         }
         if(data.responseJSON && data.responseJSON.message){
             msg = data.responseJSON.message;
+        }
+        if(!data.message && data.data){
+            // "data": {
+            //         "email": [
+            //             "Invalid email address"
+            //         ],
+            //         "phone": [
+            //             "'phone' should not contain letters. Example +11 (111) 111-11-11"
+            //         ]
+            //     },
+            Object.keys(data.data).forEach(function(key) {
+                msg += '<br>' + data.data[key].join('<br>');
+            });
         }
         this.showStep(1);
         this._showError(msg);
