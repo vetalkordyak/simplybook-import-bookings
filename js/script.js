@@ -5,8 +5,7 @@ var Import = function() {
 
 jQuery.extend(Import.prototype, {
 
-    //apiUrl: 'https://user-api-v2.simplybook.me/',
-    apiUrl: 'https://user-api-v2.em.vetal.d.simplybook.me/',
+    apiUrl: 'https://user-api-v2.simplybook.me/',
 
     fields: [
         'client_name',
