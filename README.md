@@ -10,3 +10,6 @@ The application is divided into four steps:
 * Data import: The application imports the data into the SimplyBook.me system. It searches for existing clients or creates new ones if necessary, and then makes bookings based on the provided data. The progress of the import is displayed to the user.  
 
 The application also handles errors and displays appropriate messages to the user. It stores the login data in the local storage for convenience.
+
+
+Demo: https://vetalkordyak.github.io/simplybook-import-bookings/
